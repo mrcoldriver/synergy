@@ -1,8 +1,10 @@
 <template>
   <v-container fluid>
     <v-layout row>
-      <v-flex xs6 order-lg2></v-flex>
-      <v-flex xs6 order-lg2>
+      <v-flex xs5 order-lg2>
+        <h1>Занимаемые должности</h1>
+      </v-flex>
+      <v-flex xs7 order-lg2>
         <v-container fluid>
           <v-layout row>
             <v-flex xs12 order-lg2>
@@ -15,7 +17,7 @@
             </v-flex>
           </v-layout>
           <v-layout>
-            <v-flex xs4>
+            <v-flex sm4>
               <v-checkbox
                 v-model="fired"
                 @change="toggleFired"
@@ -23,11 +25,19 @@
                 label="Показывать уволенных"
               ></v-checkbox>
             </v-flex>
-            <v-flex xs4 style="margin: auto 10px;">
+            <v-flex sm4 style="margin: auto 10px;">
               <v-btn block color="teal">Принять на должность</v-btn>
             </v-flex>
-            <v-flex xs4 style="margin: auto 10px;">
-              <v-btn block disabled color="success">Снять с должности</v-btn>
+            <v-flex sm4 style="margin: auto 10px;">
+              <v-btn
+                :disabled="!selected.length"
+                @click="showSelected"
+                block
+                color="teal"
+              >
+                <span v-if="selected.length > 1">Снять с должностей</span>
+                <span v-else>Снять с должности</span>
+              </v-btn>
             </v-flex>
           </v-layout>
         </v-container>
@@ -39,35 +49,9 @@
       :items="getOccupations"
       :pagination.sync="pagination"
       :search="search"
-      item-key="name"
       select-all
+      item-key="name"
     >
-      <template v-slot:headers="props">
-        <tr>
-          <th>
-            <v-checkbox
-              :input-value="props.all"
-              :indeterminate="props.indeterminate"
-              @click="toggleAll"
-              primary
-              hide-details
-            ></v-checkbox>
-          </th>
-          <th
-            v-for="header in props.headers"
-            :key="header.text"
-            :class="[
-              'column sortable',
-              pagination.descending ? 'desc' : 'asc',
-              header.value === pagination.sortBy ? 'active' : ''
-            ]"
-            @click="changeSort(header.value)"
-          >
-            <v-icon small>arrow_upward</v-icon>
-            {{ header.text }}
-          </th>
-        </tr>
-      </template>
       <template v-slot:no-results>
         <v-alert :value="true" color="red lighten-3" icon="warning">
           Нет сотрудников по запросу "{{ search }}".
@@ -77,6 +61,7 @@
         <tr
           :class="{ 'red lighten-3': props.item.fireDate }"
           :active="props.selected"
+          @click.capture.prevent="props.selected = !props.selected"
         >
           <td>
             <v-checkbox
@@ -226,6 +211,7 @@ export default {
         {
           text: 'Сотрудник',
           align: 'left',
+          sortable: false,
           value: 'name'
         },
         { text: 'Компания', align: 'center', value: 'companyName' },
@@ -248,6 +234,10 @@ export default {
     this.positions = this.getOccupations
   },
   methods: {
+    showSelected() {
+      // eslint-disable-next-line no-console
+      console.log(this.selected)
+    },
     save() {
       this.snack = true
       this.snackColor = 'teal'
@@ -270,8 +260,13 @@ export default {
     },
     toggleAll() {
       const toSlice = this.getOccupations.filter(pos => !pos.fireDate)
-      if (this.selected.length) this.selected = []
-      else this.selected = toSlice.slice()
+      // eslint-disable-next-line no-console
+      console.log(this.selected, toSlice)
+      if (this.selected.length) {
+        this.selected = []
+      } else {
+        this.selected = toSlice.slice()
+      }
     },
     changeSort(column) {
       if (this.pagination.sortBy === column) {

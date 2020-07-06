@@ -7,6 +7,12 @@ pipenv run python manage.py migrate
 npm install
 ```
 
+## Initialize data
+
+``` bash
+python manage.py loaddata occupations
+```
+
 ## Start project
 
 ```
