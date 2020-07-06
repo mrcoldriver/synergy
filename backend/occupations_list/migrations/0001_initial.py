@@ -12,32 +12,26 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+
         migrations.CreateModel(
-            name='Category',
+            name='Occupation',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
+                ('name', models.CharField(max_length=200, unique=True, verbose_name='Имя')),
+                ('company_name', models.CharField(max_length=100, verbose_name='Компания')),
+                ('position_name', models.CharField(max_length=100, verbose_name='Должность')),
+                ('hire_date', models.DateField(verbose_name='Дата приема')),
+                ('fire_date', models.DateField(null=True, verbose_name='Дата увольнения')),
+                ('salary', models.IntegerField(verbose_name='Ставка, руб.')),
+                ('fraction', models.IntegerField(verbose_name='Ставка, %')),
+                ('base', models.IntegerField(verbose_name='База, руб.')),
+                ('advance', models.IntegerField(verbose_name='Аванс')),
+                ('by_hours', models.BooleanField(verbose_name='Почасовая оплата')),
             ],
             options={
-                'verbose_name': 'Категория',
-                'verbose_name_plural': 'Категории',
-            },
-        ),
-        migrations.CreateModel(
-            name='Todo',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=250)),
-                ('text', models.TextField(blank=True)),
-                ('created_date', models.DateField(auto_now_add=True)),
-                ('due_date', models.DateField(default=backend.occupations_list.models.get_due_date)),
-                ('done', models.BooleanField(default=False)),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='occupations_list', to='occupations_list.Category')),
-            ],
-            options={
-                'verbose_name': 'Задача',
-                'verbose_name_plural': 'Задачи',
-                'ordering': ('-created_date',),
+                'verbose_name': 'Должность',
+                'verbose_name_plural': 'Должности',
+                'ordering': ('-hire_date',),
             },
         ),
     ]
